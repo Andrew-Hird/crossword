@@ -11,7 +11,14 @@ function makeEmptyGrid(width: number, height: number): GridModel {
   );
 }
 
-export function generateGrid(width = 12, height = 12, blackRatio = 0.18): GridModel {
+export type Rng = () => number; // returns [0, 1)
+
+export function generateGrid(
+  width = 12,
+  height = 12,
+  blackRatio = 0.18,
+  rng: Rng = Math.random,
+): GridModel {
   const w = Math.max(3, Math.min(50, Math.floor(width)));
   const h = Math.max(3, Math.min(50, Math.floor(height)));
   const ratio = Math.max(0, Math.min(0.6, blackRatio));
@@ -25,8 +32,8 @@ export function generateGrid(width = 12, height = 12, blackRatio = 0.18): GridMo
   let guard = 0;
   while (placed < targetBlacks && guard < area * 10) {
     guard++;
-    const r = Math.floor(Math.random() * h);
-    const c = Math.floor(Math.random() * w);
+    const r = Math.floor(rng() * h);
+    const c = Math.floor(rng() * w);
     const cell = grid[r]?.[c];
     if (!cell || cell.isBlack) continue;
     cell.isBlack = true;

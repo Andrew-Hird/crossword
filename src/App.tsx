@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { generateGrid } from './generateGrid';
 import type { GridModel } from './generateGrid';
+import { rngFromSeed } from './rng';
 
 type Dir = 'across' | 'down';
 type Pos = { r: number; c: number };
@@ -47,17 +48,47 @@ function getWordCells(grid: GridModel, pos: Pos, dir: Dir): Pos[] {
   return cells;
 }
 
+function getSeedFromLocation(): string | null {
+  // Path-based seeds only: https://domain/<seed>
+  const path = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '');
+  return path || null;
+}
+
+function setSeedInLocation(seed: string) {
+  const url = new URL(window.location.href);
+  url.pathname = `/${seed}`;
+  url.search = '';
+  window.history.replaceState(null, '', url.toString());
+}
+
+function getOrCreateSeed(): string {
+  const existing = getSeedFromLocation();
+  if (existing) return existing;
+  const seed = crypto.randomUUID();
+  setSeedInLocation(seed);
+  return seed;
+}
+
 export function App() {
   const width = 12;
   const height = 12;
   const blackRatio = 0.18;
 
-  const [grid, setGrid] = useState<GridModel>(() => generateGrid(width, height, blackRatio));
+  const [seed, setSeed] = useState<string>(() => getOrCreateSeed());
+  const [grid, setGrid] = useState<GridModel>(() =>
+    generateGrid(width, height, blackRatio, rngFromSeed(getOrCreateSeed())),
+  );
   const [active, setActive] = useState<{ pos: Pos; dir: Dir } | null>(null);
   const inputsRef = useRef<Array<Array<HTMLInputElement | null>>>([]);
   const programmaticFocusRef = useRef(false);
 
-  const regenerate = () => setGrid(generateGrid(width, height, blackRatio));
+  const regenerate = () => {
+    const nextSeed = crypto.randomUUID();
+    setSeed(nextSeed);
+    setSeedInLocation(nextSeed);
+    setGrid(generateGrid(width, height, blackRatio, rngFromSeed(nextSeed)));
+    setActive(null);
+  };
 
   const selectedWord = useMemo(() => {
     if (!active) return { cells: [] as Pos[], start: null as Pos | null };
