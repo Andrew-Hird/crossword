@@ -44,6 +44,7 @@ body {
   width: var(--cell);
   height: var(--cell);
   border: 1px solid #111;
+  border-radius: 0;
 }
 
 .cellBlack {
@@ -51,12 +52,15 @@ body {
 }
 
 .cellWhite {
+  appearance: none;
+  -webkit-appearance: none;
   background: #fff;
   text-align: center;
   font-size: calc(var(--cell) * 0.55);
   font-weight: 700;
   text-transform: uppercase;
   outline: none;
+  border-radius: 0;
 }
 
 .cellWhite:focus {
