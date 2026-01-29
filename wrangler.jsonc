@@ -1,0 +1,9 @@
+{
+  "name": "crossword",
+  "compatibility_date": "2026-01-29",
+  "main": "./src/worker.ts",
+  "assets": {
+    "directory": "./dist"
+  }
+}
+
