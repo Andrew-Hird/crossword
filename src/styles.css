@@ -63,6 +63,15 @@ body {
   border-radius: 0;
 }
 
+.cellSelected {
+  background: #e7f1ff;
+  box-shadow: inset 0 0 0 2px rgba(43, 108, 255, 0.35);
+}
+
+.cellActive {
+  box-shadow: inset 0 0 0 2px #2b6cff;
+}
+
 .cellWhite:focus {
   box-shadow: inset 0 0 0 2px #2b6cff;
 }
